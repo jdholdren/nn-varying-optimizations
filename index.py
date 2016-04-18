@@ -52,7 +52,7 @@ def createDataSet(n):
 nn = NeuralNet()
 
 # Create some data
-X, y = createDataSet(1000)
+X, y = createDataSet(100000)
 
 # The learning constant
 k = 0.001
@@ -60,21 +60,33 @@ k = 0.001
 recordedPositions = []
 
 def train(nn):
+	# Probability that the method will go uphill
+	prob = 40.0
+
 	# Train via normal method
 	for i in range(len(X)):
 		dW1, dW2 = nn.computeGradient(X[i], y[i])
 
+		# Scalars that decide if the algorithm will go uphill or downhill
+		w1Scalar = 1
+		w2Scalar = 1
+
+		if (uniform(0, 100) < prob):
+			w1Scalar = -1
+		if (uniform(0, 100) < prob):
+			w2Scalar = -1
+
 		# Adjust weights
-		nn.w1 = nn.w1 - k * dW1
-		nn.w2 = nn.w2 - k * dW2
+		nn.w1 = nn.w1 - k * dW1 * w1Scalar
+		nn.w2 = nn.w2 - k * dW2 * w2Scalar
 
 		if (i % 100 == 0):
 			recordedPositions.append([nn.w1, nn.w2])
 
-for a in range(10):
-	for b in range(10):
-		nn.w1 = -1 + 0.25 * a
-		nn.w2 = -1 + 0.25 * b
+for a in range(3):
+	for b in range(3):
+		nn.w1 = -1 + a
+		nn.w2 = 0 + b
 
 		train(nn)
 
@@ -82,7 +94,7 @@ for a in range(10):
 
 
 # Write results to file
-fo = open("globalPositions.csv", "w")
+fo = open("marcoPositions.csv", "w")
 
 for i in range(len(recordedPositions)):
 	if (len(recordedPositions[i]) == 0):
