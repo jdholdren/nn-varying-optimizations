@@ -52,7 +52,7 @@ def createDataSet(n):
 nn = NeuralNet()
 
 # Create some data
-X, y = createDataSet(100000)
+X, y = createDataSet(10000)
 
 # The learning constant
 k = 0.001
@@ -60,25 +60,19 @@ k = 0.001
 recordedPositions = []
 
 def train(nn):
-	# Probability that the method will go uphill
-	prob = 40.0
+	n1Vel = 0
+	n2Vel = 0
 
 	# Train via normal method
 	for i in range(len(X)):
-		dW1, dW2 = nn.computeGradient(X[i], y[i])
+		w1Accel, w2Accel = nn.computeGradient(X[i], y[i])
 
-		# Scalars that decide if the algorithm will go uphill or downhill
-		w1Scalar = 1
-		w2Scalar = 1
-
-		if (uniform(0, 100) < prob):
-			w1Scalar = -1
-		if (uniform(0, 100) < prob):
-			w2Scalar = -1
+		n1Vel += k * w1Accel
+		n2Vel += k * w2Accel
 
 		# Adjust weights
-		nn.w1 = nn.w1 - k * dW1 * w1Scalar
-		nn.w2 = nn.w2 - k * dW2 * w2Scalar
+		nn.w1 = nn.w1 - 0.01 * n1Vel
+		nn.w2 = nn.w2 - 0.01 * n2Vel
 
 		if (i % 100 == 0):
 			recordedPositions.append([nn.w1, nn.w2])
